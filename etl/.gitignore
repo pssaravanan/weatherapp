@@ -206,3 +206,6 @@ __marimo__/
 #dagster
 dagster.yaml
 .dagster/
+
+# local analytics storage
+storage/

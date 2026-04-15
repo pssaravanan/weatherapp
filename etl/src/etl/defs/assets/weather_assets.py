@@ -9,26 +9,26 @@ class WeatherAssetConfig(dg.Config):
     date: str = "2024-01-01"
     metric_names: list[str] = ["temperature"]
 
-
-@dg.asset
+@dg.asset(
+    group_name="bronze",
+    description="Raw hourly weather data landed from the Open-Meteo API.",
+)
 def temperature_bronze(
     config: WeatherAssetConfig, open_meteo: dg.ResourceParam[OpenMeteo]
-) -> dg.MaterializeResult:
+) -> pd.DataFrame:
     df = open_meteo.get_metrics(config.city, config.date, config.metric_names)
-    return dg.MaterializeResult(
-        metadata={
-            "city": config.city,
-            "date": config.date,
-            "metrics": config.metric_names,
-            "rows": len(df),
-        },
-        value=df,
-    )
+    bronze_df = df.copy()
+    bronze_df["city"] = config.city
+    bronze_df["date"] = config.date
+    bronze_df["layer"] = "bronze"
+    return bronze_df
 
-
-@dg.asset
-def temperature_silver(temperature_bronze: pd.DataFrame) -> dg.MaterializeResult:
-    return dg.MaterializeResult(
-        metadata={"transformed": True, "rows": len(temperature_bronze)},
-        value=temperature_bronze,
-    )
+@dg.asset(
+    group_name="silver",
+    description="Cleaned hourly weather data modeled from the bronze layer.",
+)
+def temperature_silver(temperature_bronze: pd.DataFrame) -> pd.DataFrame:
+    silver_df = temperature_bronze.copy()
+    silver_df.columns = [column.lower() for column in silver_df.columns]
+    silver_df["layer"] = "silver"
+    return silver_df

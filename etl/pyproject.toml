@@ -4,6 +4,7 @@ requires-python = ">=3.10,<3.15"
 version = "0.1.0"
 dependencies = [
     "dagster==1.13.0",
+    "dagster-duckdb-pandas>=0.29.0",
     "pandas>=2.3.3",
 ]
 
@@ -28,5 +29,3 @@ root_module = "etl"
 registry_modules = [
     "etl.components.*",
 ]
-
-
