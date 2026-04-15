@@ -43,7 +43,7 @@ class OpenMeteo(dg.ConfigurableResource):
             "&timezone=auto"
         )
 
-    def get_metrics(self, city: str, date: str, metric_names: List[str] = ['temperature']) -> dict:
+    def get_metrics(self, city: str, date: str, metric_names: List[str] = ['temperature']) -> pd.DataFrame:
         url = self._url(city, date, metric_names)  # Assuming the API can only handle one metric at a time
         response = requests.get(url)
         if response.status_code == 200:
