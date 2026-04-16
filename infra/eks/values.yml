@@ -336,14 +336,13 @@ dagster-user-deployments:
   deployments:
     - name: "k8s-example-user-code-1"
       image:
-        # When a tag is not supplied, it will default as the Helm chart version.
-        repository: "docker.io/dagster/user-code-example"
-        tag: ~
+        repository: "weatherapp-etl"
+        tag: "v1"
 
         # Change with caution! If you're using a fixed tag for pipeline run images, changing the
         # image pull policy to anything other than "Always" will use a cached/stale image, which is
         # almost certainly not what you want.
-        pullPolicy: Always
+        pullPolicy: Never
 
       # Arguments to `dagster api grpc`.
       # Ex: "dagster api grpc -m dagster_test.test_project.test_jobs.repo -a define_demo_execution_repo"
@@ -359,8 +358,8 @@ dagster-user-deployments:
       # reload its definitions from within the Dagster UI without needing to restart the user code
       # deployment pod.
       dagsterApiGrpcArgs:
-        - "--python-file"
-        - "/example_project/example_repo/repo.py"
+        - "--module-name"
+        - "etl.definitions"
       port: 3030
 
       # Whether or not to include configuration specified for this user code deployment in the pods
@@ -1511,11 +1510,9 @@ additionalInstanceConfig: {}
 ####################################################################################################
 pipelineRun:
   image:
-    # When a tag is not supplied for a Dagster provided image,
-    # it will default as the Helm chart version.
-    repository: "docker.io/dagster/user-code-example"
-    tag: ~
-    pullPolicy: Always
+    repository: "weatherapp-etl"
+    tag: "v1"
+    pullPolicy: Never
 
   # Additional environment variables to set.
   # A Kubernetes ConfigMap will be created with these environment variables. See:
@@ -1527,4 +1524,3 @@ pipelineRun:
   #   ENV_ONE: one
   #   ENV_TWO: two
   env: {}
-

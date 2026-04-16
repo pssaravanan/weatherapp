@@ -9,17 +9,10 @@ ENV PYTHONUNBUFFERED=1
 
 RUN pip install --upgrade pip
 
-# Install dagster and any other dependencies your project requires
-RUN \
-    pip install \
-        dagster \
-        dagster-postgres \
-        dagster-k8s \
-        # add any other dependencies here
-        pandas
-
-
 WORKDIR /weatherapp-etl/
+
+# Install the project so its src-layout package and dependencies are available
+RUN pip install .
 
 # Expose the port that your Dagster instance will run on
 EXPOSE 80
