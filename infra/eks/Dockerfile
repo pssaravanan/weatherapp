@@ -12,7 +12,7 @@ RUN pip install --upgrade pip
 WORKDIR /weatherapp-etl/
 
 # Install the project so its src-layout package and dependencies are available
-RUN pip install .
+RUN pip install . dagster-postgres dagster-k8s
 
 # Expose the port that your Dagster instance will run on
 EXPOSE 80
