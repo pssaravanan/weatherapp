@@ -509,7 +509,7 @@ scheduler:
 ####################################################################################################
 runLauncher:
   # Type can be one of [K8sRunLauncher, CeleryK8sRunLauncher, CustomRunLauncher]
-  type: K8sRunLauncher
+  type: CeleryK8sRunLauncher
 
   config:
     # This configuration will only be used if the K8sRunLauncher is selected
@@ -643,15 +643,13 @@ runLauncher:
       # Change with caution! If you're using a fixed tag for pipeline run images, changing the
       # image pull policy to anything other than "Always" will use a cached/stale image, which is
       # almost certainly not what you want.
-      imagePullPolicy: "Always"
+      imagePullPolicy: "Never"
 
       # The Celery workers can be deployed with a fixed image (no user code included)
       image:
-        # When a tag is not supplied for a Dagster provided image,
-        # it will default as the Helm chart version.
-        repository: "docker.io/dagster/dagster-celery-k8s"
-        tag: ~
-        pullPolicy: Always
+        repository: "weatherapp-etl"
+        tag: "v1"
+        pullPolicy: Never
 
       # The Kubernetes namespace where new jobs will be launched.
       # By default, the release namespace is used.
@@ -917,7 +915,7 @@ redis:
 # Flower: (Optional) The flower web interface for diagnostics and debugging Celery queues & workers
 ####################################################################################################
 flower:
-  enabled: false
+  enabled: true
 
   image:
     repository: "docker.io/mher/flower"
@@ -925,7 +923,7 @@ flower:
     pullPolicy: Always
 
   service:
-    type: ClusterIP
+    type: NodePort
     annotations: {}
     port: 5555
 
